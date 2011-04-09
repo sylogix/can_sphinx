@@ -1,0 +1,3 @@
+module CanSphinx
+  # Your code goes here...
+end
