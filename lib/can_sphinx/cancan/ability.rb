@@ -30,11 +30,11 @@ module CanSphinx
         else
           classes.each do |subject|
             relevant_rules(action, subject).each do |rule|
-              sphinx_conditions << rule.sphinx_conditions if rule.sphinx_conditions
+              sphinx_conditions << (!rule.base_behavior ? 'NOT ':'') +'('+rule.sphinx_conditions+')' if rule.sphinx_conditions
             end        
           end      
         end
-        "*, IF((#{sphinx_conditions.join(') OR (')}),1,0) AS authorized" unless sphinx_conditions.empty?
+        "*, IF(#{sphinx_conditions.join(' OR ')},1,0) AS authorized" unless sphinx_conditions.empty?
       end
       private
       def relevant_rules_with_sphinx(action, subject = nil)
