@@ -1,3 +1,4 @@
+require 'thinking_sphinx/search'
 module CanSphinx
   module ThinkingSphinx
     module Search
@@ -24,7 +25,7 @@ module CanSphinx
         def set_authorizations_options
           if !@options[:sphinx_select] and @options[:sphinx_select] = options[:authorize_with].sphinx_conditions(:index, classes)
             @options[:with] ||= {}
-            @options[:with].merge({:authorized => 1})
+            @options[:with].merge!({:authorized => 1})
           end
         end
     end
