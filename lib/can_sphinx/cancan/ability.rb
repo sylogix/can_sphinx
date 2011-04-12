@@ -43,8 +43,7 @@ module CanSphinx
           if model_conditions.include?(:all)
             :all
           else
-            #"(class_crc = #{model.to_crc32} AND (#{model_conditions.empty? ? '0': model_conditions.join(' OR ')}))"
-            "IF(class_crc = #{model.to_crc32},(#{model_conditions.empty? ? '0': model_conditions.join(' OR ')}),0)"
+            "(class_crc = #{model.to_crc32} AND (#{model_conditions.empty? ? '0': model_conditions.join(' OR ')}))"
           end
         end
 
