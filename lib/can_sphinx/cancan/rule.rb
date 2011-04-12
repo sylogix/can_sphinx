@@ -7,8 +7,6 @@ module CanSphinx
           attr_reader :sphinx_conditions  
           alias_method :initialize_without_sphinx, :initialize
           alias_method :initialize, :initialize_with_sphinx
-          alias_method :relevant_without_sphinx?, :relevant?
-          alias_method :relevant?, :relevant_with_sphinx?
         end 
       end    
       
@@ -21,11 +19,6 @@ module CanSphinx
         @conditions = conditions || {}
         @sphinx_conditions = sphinx_conditions
         @block = block
-      end
-    
-      def relevant_with_sphinx?(action, subject = nil)
-        subject = subject.values.first if subject && subject.class == Hash
-        @match_all || subject ? (matches_action?(action) && matches_subject?(subject)) : matches_action?(action)
       end
     end
   end

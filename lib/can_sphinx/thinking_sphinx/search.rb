@@ -23,7 +23,7 @@ module CanSphinx
       end
       private
         def set_authorizations_options
-          if !@options[:sphinx_select] and @options[:sphinx_select] = options[:authorize_with].sphinx_conditions(:index, classes)
+          if !options[:sphinx_select] and options[:authorize_with] and @options[:sphinx_select] = options[:authorize_with].sphinx_conditions(!classes.empty?? classes : ::ThinkingSphinx.context.indexed_models.map(&:constantize))
             @options[:with] ||= {}
             @options[:with].merge!({:authorized => 1})
           end
