@@ -37,13 +37,25 @@ module CanSphinx
               :all
             elsif rule.sphinx_conditions
               (!rule.base_behavior ? 'NOT ':'') +'('+rule.sphinx_conditions+')'
-             end
+            elsif rule.conditions.empty?
+              :without_conditions
+            end
+            
           end
           model_conditions.compact!
-          if model_conditions.include?(:all)
+          if model_conditions.empty?
+            string_conditions = '0'
+          elsif model_conditions.include?(:all)
+            string_conditions = :all
+          elsif model_conditions.all? {|c| c == :without_conditions}
+            string_conditions = '1'
+          else
+            string_conditions = model_conditions.join(' OR ')
+          end
+          if string_conditions == :all
             :all
           else
-            "(class_crc = #{model.to_crc32} AND (#{model_conditions.empty? ? '0': model_conditions.join(' OR ')}))"
+            "(#{string_conditions})"
           end
         end
 
