@@ -60,4 +60,3 @@ In our People controller we might have something like this :
   
   
   
-test
