@@ -11,7 +11,7 @@ module CanSphinx
       end    
       
       def initialize_with_sphinx(base_behavior, action, subject, conditions, sphinx_conditions, block)
-        raise Error, "You are not able to supply a block with a hash of conditions in #{action} #{subject} ability. Use either one." if conditions.kind_of?(Hash) && !block.nil?
+        raise ::CanCan::Rule::Error, "You are not able to supply a block with a hash of conditions in #{action} #{subject} ability. Use either one." if conditions.kind_of?(Hash) && !block.nil?
         @match_all = action.nil? && subject.nil?
         @base_behavior = base_behavior
         @actions = [action].flatten
