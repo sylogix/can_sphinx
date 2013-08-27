@@ -8,18 +8,15 @@ module CanSphinx
           alias_method :initialize, :initialize_with_sphinx
         end 
       end        
-      def initialize_with_sphinx(*args)
-        ::ThinkingSphinx.context.define_indexes
-        
-        @array    = []
-        @options  = args.extract_options!
-        @args     = args
+
+      def initialize_with_sphinx(query = nil, options = {})
+        query, options   = nil, query if query.is_a?(Hash)
+        @query, @options = query, options
+        @masks           = @options.delete(:masks) || ::ThinkingSphinx::Search::DEFAULT_MASKS
+        @middleware      = @options.delete(:middleware)
 
         set_authorizations_options if options[:authorize_with]
-        
-        add_default_scope unless options[:ignore_default]
-        
-        populate if @options[:populate]
+        populate if options[:populate]
       end
       private
         def set_authorizations_options

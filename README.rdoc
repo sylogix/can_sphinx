@@ -1,13 +1,13 @@
 = CanSphinx
 
 CanSphinx is a Ruby on Rails library which allows you to use CanCan[https://github.com/ryanb/cancan] for authorizing resources searched by 
-ThinkingSphinx[https://github.com/freelancing-god/thinking-sphinx].
+ThinkingSphinx[https://github.com/pat/thinking-sphinx].
 
 == Installation
 
-In <b>Rails 3</b>, add this to your Gemfile and run the +bundle+ command.
+In <b>Rails 4</b>, add this to your Gemfile and run the +bundle+ command.
 
-  gem 'can_sphinx', :git => 'git://github.com/sylogix/can_sphinx.git'
+  gem 'can_sphinx', :github => 'sylogix/can_sphinx'
 
 == Getting Started
 
