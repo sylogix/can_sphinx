@@ -4,7 +4,7 @@ module CanSphinx
     module Search
       module Merger
         def self.included(base)
-          base.class_eval do 
+          base.class_eval do
             alias_method :merge_without_sphinx, :merge!
             alias_method :merge!, :merge_with_sphinx
           end
@@ -19,8 +19,7 @@ module CanSphinx
         private
 
         def set_authorizations_options
-          if !@search.options[:sphinx_select] and @search.options[:authorize_with] and @search.options[:sphinx_select] = @search.options[:authorize_with].sphinx_conditions(@search.options[:classes])
-            puts @search.options[:sphinx_select]
+          if !@search.options[:select] and @search.options[:authorize_with] and @search.options[:select] = @search.options[:authorize_with].sphinx_conditions(@search.options[:classes])
             @search.options[:with] ||= {}
             @search.options[:with].merge!({:authorized => 1})
           end
