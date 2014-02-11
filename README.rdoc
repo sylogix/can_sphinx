@@ -16,45 +16,37 @@ So the first thing we need to do is to make sure that all attributes needed are 
 In this example, we are authorized to see all our coworkers (= people with the same company_id as us) and all our friends (= people with a friendship association with us)
 
 index:
-```ruby
-ThinkingSphinx::Index.define :person, :with => :active_record do
-  indexes first_name, :sortable => true
-  indexes last_name, :sortable => true
+  ThinkingSphinx::Index.define :person, :with => :active_record do
+    indexes first_name, :sortable => true
+    indexes last_name, :sortable => true
 
-  has company_id
-  has friendships(:person_id), :as => :friends
-end
-```
+    has company_id
+    has friendships(:person_id), :as => :friends
+  end
 
 model:
-```ruby
-class Person < ActiveRecord::Base
+  class Person < ActiveRecord::Base
 
-  belongs_to :company
-  has_many :friendships
-  has_many :friends, :through => :friendships
-  
-end
+    belongs_to :company
+    has_many :friendships
+    has_many :friends, :through => :friendships
+    
+  end
 
-class Friendship < ActiveRecord::Base
-  belongs_to :person
-  belongs_to :friend, :class_name => 'Person', :foreign_key => 'friend_id'
-end
-```
+  class Friendship < ActiveRecord::Base
+    belongs_to :person
+    belongs_to :friend, :class_name => 'Person', :foreign_key => 'friend_id'
+  end
 
 Then we need to update our ability.rb so we can add a condition in a langage Sphinx can understand :
-```ruby
-can :read, Person, Person.include(:friendships).where(['company_id = ? OR friendships.user_id = ?', user.company_id, user.id]) do |p|
-  p.company_id == user.company_id or p.friendships.where(:user_id => user.id).empty?
-end
-```
+  can :read, Person, Person.include(:friendships).where(['company_id = ? OR friendships.user_id = ?', user.company_id, user.id]) do |p|
+    p.company_id == user.company_id or p.friendships.where(:user_id => user.id).empty?
+  end
 
 Simply becomes :
-```ruby
-can :read, Person, Person.include(:friendships).where(['company_id = ? OR friendships.user_id = ?', user.company_id, user.id]), "company_id = #{user.company_id} OR IN(friends,#{user.id})" do |p|
-  p.company_id == user.company_id or p.friendships.where(:user_id => user.id).empty?
-end
-```
+  can :read, Person, Person.include(:friendships).where(['company_id = ? OR friendships.user_id = ?', user.company_id, user.id]), "company_id = #{user.company_id} OR IN(friends,#{user.id})" do |p|
+    p.company_id == user.company_id or p.friendships.where(:user_id => user.id).empty?
+  end
 
   can action, subject, conditions
   become:
@@ -63,18 +55,16 @@ end
 sphinx_conditions can be a string for thinking sphinx attributes conditions or a hash:
   {with: thinking_sphinx_attributes_conditions, match: match_conditions}
 both must be write in sphinxQL[http://sphinxsearch.com/docs/current.html#sphinxql-reference]
-match_conditions must have a [boolean syntax](http://sphinxsearch.com/docs/current.html#boolean-syntax)
+match_conditions must have a boolean-syntax[http://sphinxsearch.com/docs/current.html#boolean-syntax]
 
 You can find the complete syntax of Sphinx select here[http://sphinxsearch.com/docs/manual-0.9.9.html#sort-expr].
 In a future release, CanSphinx might directly use CanCan conditions when it's a Hash.
 We will need to it manually for complex conditions.
 Now we simply have to pass our abilities to the ThinkingSphinx search.
 In our People controller we might have something like this :
-```ruby
-def index
-  @people = Person.search params[:search], :authorize_with => current_ability
-end
-```
+  def index
+    @people = Person.search params[:search], :authorize_with => current_ability
+  end
   
   
   
