@@ -22,11 +22,11 @@ module CanSphinx
       def sphinx_conditions(classes)
 
         action = :index
-        model_conditions = classes.map {|model| sphinx_condition_for(action, model)}
+        model_conditions = classes.map {|model| sphinx_condition_for(action, model)}.compact
         if model_conditions.include?(:all)
           false
         else
-          "*, IF(#{model_conditions.compact.join(' OR ')},1,0) AS authorized"
+          "*, IF(#{model_conditions.join(' OR ')},1,0) AS authorized" if !model_conditions.empty?
         end
       end
 
@@ -34,8 +34,8 @@ module CanSphinx
         action = :index
         model_conditions = classes.map {|model| sphinx_match_condition_for(action, model)}
 
-        if match_query
-          "#{model_conditions.join(' | ')}  #{match_query}"
+        if !match_query.blank?
+          "#{match_query} #{model_conditions.join(' | ')}"
         else
           model_conditions.join(' | ')
         end
@@ -47,7 +47,7 @@ module CanSphinx
           model_conditions = relevant_rules(action, model).map do |rule|
             if rule.subjects.include?(:all) and rule.base_behavior
               :all
-            elsif rule.sphinx_conditions[:with]
+            elsif rule.sphinx_conditions.try(:[], :with)
               (!rule.base_behavior ? 'NOT ':'') +'('+rule.sphinx_conditions[:with]+')'
             elsif rule.conditions.empty?
               :without_conditions
@@ -64,11 +64,10 @@ module CanSphinx
           else
             string_conditions = model_conditions.join(' OR ')
           end
-          if string_conditions == :all
-            :all
-          else
-            "(#{string_conditions})"
-          end
+
+
+          string_conditions = "(#{string_conditions})" if string_conditions != :all
+          string_conditions if string_conditions != '(0)' || sphinx_match_condition_for(action, model).blank?
         end
 
         def sphinx_match_condition_for(action, model)
