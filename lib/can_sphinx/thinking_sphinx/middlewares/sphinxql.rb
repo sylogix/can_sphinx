@@ -15,7 +15,7 @@ module CanSphinx
         def extended_query_with_sphinx
           if @extended_query.nil?
             extended_query_without_sphinx
-            @extended_query = options[:authorize_with].sphinx_match_conditions(options[:classes], @extended_query)
+            @extended_query = options[:authorize_with].sphinx_match_conditions(options[:classes], @extended_query) if options[:authorize_with]
           end
           @extended_query
         end
